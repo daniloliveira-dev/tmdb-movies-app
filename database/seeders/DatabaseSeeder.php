@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Movie;
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -18,6 +18,16 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
+        ]);
+
+        Movie::factory()->create([
+            'movie_id' => 10,
+            'title' => 'Fav Movie',
+            'director' => 'Unknown',
+            'release_year' => '2022-01-01',
+            'genre' => 'Action',
+            'rating' => 8.5,
+            'favorite' => 1,
         ]);
     }
 }

@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Models\Movie;
 use App\Models\User;
 use App\Services\TmdbService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Testing\AssertableInertia as Assert;
 use Mockery;
 use Tests\TestCase;
@@ -80,7 +80,15 @@ class MovieControllerTest extends TestCase
         $this->tmdbServiceMock
             ->shouldReceive('favorites')
             ->with(22235988, 1)
-            ->andReturn(['results' => [['id' => 5, 'title' => 'Fav Movie']]]);
+            ->andReturn(['results' => [[
+                'movie_id' => 5,
+                'title' => 'Fav Movie',
+                'director' => 'Unknown',
+                'release_year' => '2022-01-01',
+                'genre' => 'Action',
+                'rating' => 8.5,
+                'favorite' => 0,
+            ]]]);
 
         $this->tmdbServiceMock
             ->shouldReceive('genres')
@@ -116,10 +124,14 @@ class MovieControllerTest extends TestCase
     {
         $user = User::factory()->create(['account_id' => 22235988]);
 
+        $movie = Movie::factory()->create();
+
         $this->tmdbServiceMock
             ->shouldReceive('removeFromFavorite')
             ->with(22235988, 10)
             ->andReturn(response()->json(['message' => 'Filme removido dos favoritos.']));
+
+        $this->assertDatabaseHas('movies', $movie->toArray());
 
         $response = $this->actingAs($user)->post('/remove-favorites/10');
         $response->assertJson(['message' => 'Filme removido dos favoritos.']);

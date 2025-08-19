@@ -3,52 +3,29 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Movie extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
+        'movie_id',
         'title',
         'director',
         'release_year',
         'genre',
         'rating',
+        'favorite',
     ];
 
     protected $casts = [
+        'movie_id' => 'integer',
         'title' => 'string',
         'director' => 'string',
         'release_year' => 'date',
         'genre' => 'string',
         'rating' => 'float',
+        'favorite' => 'boolean'
     ];
-
-    public function getMovies()
-    {
-        return Movie::all();
-    }
-
-    public function getMovieById($id)
-    {
-        return Movie::find($id);
-    }
-
-    public function updateMovie($id, array $data)
-    {
-        $movie = Movie::find($id);
-        if ($movie) {
-            $movie->update($data);
-            return $movie;
-        }
-        return false;
-    }
-
-    public function deleteMovie($id)
-    {
-        $movie = Movie::find($id);
-        if ($movie) {
-            $movie->delete();
-            return true;
-        }
-        return false;
-    }
 }

@@ -6,36 +6,35 @@ use App\Models\Movie;
 
 class MovieRepository extends Movie
 {
-    public function getAllMovies()
+    public static function getAllMovies()
     {
         return Movie::all();
     }
 
-    public function getMovieById($id)
+    public static function getMovieByMovieId($movieId)
     {
-        return Movie::find($id);
+        return Movie::where('movie_id', $movieId)->first();
     }
 
-    public function createMovie(array $data)
+    public static function createFavoriteMovie(array $data)
     {
         return Movie::create($data);
     }
 
-    public function updateMovie($id, array $data)
+    public static function updateFavoriteMovie($movieId, array $data)
     {
-        $movie = Movie::find($id);
+        $movie = Movie::where('movie_id', $movieId)->first();
         if ($movie) {
-            $movie->update($data);
-            return $movie;
+            return $movie->update($data);
         }
         return false;
     }
 
-    public function deleteMovie($id)
+    public static function deleteFavoriteMovie($movieId)
     {
-        $movie = Movie::find($id);
+        $movie = Movie::where('movie_id', $movieId)->first();
         if ($movie) {
-            $movie->delete();
+            $movie->update(['favorite' => false]);
             return true;
         }
         return false;
