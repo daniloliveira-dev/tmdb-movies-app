@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Services\TmdbService;
+use App\Repository\MovieRepository;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class MovieController extends Controller
 {
+    protected MovieRepository $repository;
     protected TmdbService $tmdbService;
 
     public function __construct(TmdbService $tmdbService)
@@ -21,7 +23,7 @@ class MovieController extends Controller
 
         if (Auth::check()) {
             return Inertia::render('Dashboard', [
-                'movies' => $movies,
+                'movies' => $movies == [] ? $this->repository->getAllMovies() : $movies,
                 'user' => Auth::user()->name
             ]);
         } else {
