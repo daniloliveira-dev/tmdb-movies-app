@@ -4,6 +4,20 @@ Aplicação Laravel integrada com a API do [TMDB](https://www.themoviedb.org/) p
 
 ---
 
+## 🛠 Tecnologias Utilizadas
+
+- **Backend:** Laravel 9 (PHP 8.2)
+- **Frontend:** Vue.js 3 + Inertia.js
+- **Banco de Dados:** MySQL 8.0 / SQLite para testes
+- **API Externa:** TMDB (The Movie Database)
+- **Autenticação:** Laravel Breeze
+- **Testes:** PHPUnit 10, Mockery
+- **Gerenciador de Dependências PHP:** Composer 2
+- **Node.js:** v20 (para compilação de assets)
+- **Docker:** Docker 24.x e Docker Compose 2.x
+
+---
+
 ## 🚀 Como rodar o projeto localmente com Docker
 
 ### 1. Clonar o repositório
@@ -19,24 +33,58 @@ cp .env.example .env
 
 ### 3. Configurar variáveis de ambiente
 - Defina a chave da API do TMDB em `TMDB_API_KEY`.
-- Configure o banco de dados conforme o `docker-compose.yml`.
+- Configure o banco de dados conforme o `docker-compose.yml` abaixo.
 
-### 4. Subir os containers com Docker Compose
+### 4. docker-compose.yml de exemplo
+```yaml
+version: '3.8'
+
+services:
+  app:
+    image: php:8.2-fpm
+    container_name: tmdb-app
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    command: php artisan serve --host=0.0.0.0 --port=8000
+
+  db:
+    image: mysql:8.0
+    container_name: tmdb-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tmdb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
+```
+
+### 5. Subir os containers
 ```bash
 docker-compose up -d --build
 ```
 
-### 5. Acessar o container Laravel
+### 6. Acessar o container Laravel
 ```bash
 docker exec -it tmdb-app bash
 ```
 
-### 6. Gerar a chave da aplicação Laravel
+### 7. Gerar a chave da aplicação Laravel
 ```bash
 php artisan key:generate
 ```
 
-### 7. Acessar a aplicação
+### 8. Acessar a aplicação
 Abra no navegador: [http://localhost:8000](http://localhost:8000)
 
 ---
@@ -46,7 +94,7 @@ Abra no navegador: [http://localhost:8000](http://localhost:8000)
 ### Opção 1: Restaurar dump SQL
 Caso exista um arquivo `dump.sql`:
 ```bash
-docker exec -i tmdb-db mysql -u root -p tmdb < dump.sql
+docker exec -i tmdb-db mysql -u root -proot tmdb < dump.sql
 ```
 
 ### Opção 2: Rodar migrations e seeds
@@ -61,7 +109,7 @@ php artisan migrate --seed
 - **Rotas:** `routes/web.php`
 - **Controller:** `app/Http/Controllers/MovieController.php`
 - **Model:** `app/Models/Movie.php`
-- **Views (Inertia/Blade):** `resources/js/Pages/Favorites.vue` (ou similar)
+- **Views (Inertia/Blade):** `resources/js/Pages/Favorites.vue`
 
 ---
 
@@ -94,16 +142,14 @@ TMDB_API_KEY=suachaveaqui
 
 ---
 
-## 🎨 Como subir o frontend separado (caso esteja desacoplado)
+## 🎨 Como subir o frontend separado (Vue.js ou React.js)
 
 Se o frontend estiver em **Vue.js** ou **React.js** dentro de `frontend/`:
-
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-
 A aplicação ficará disponível em: [http://localhost:3000](http://localhost:3000)
 
 ---
@@ -116,3 +162,4 @@ A aplicação ficará disponível em: [http://localhost:3000](http://localhost:3
 ---
 
 👨‍💻 Desenvolvido por [Danilo Oliveira](https://github.com/daniloliveira-dev)
+
